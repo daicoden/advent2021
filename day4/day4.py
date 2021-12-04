@@ -84,6 +84,14 @@ while not solved:
     for board in boards:
         board.mark_number(numbers_to_draw[current_index])
 
+    if len(boards) > 1:
+        new_boards = []
+        for board in boards:
+            if not board.is_solved():
+                new_boards.append(board)
+
+        boards = new_boards
+
     solved = next((board for board in boards if board.is_solved()), None)
 
 
