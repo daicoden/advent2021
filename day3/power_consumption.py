@@ -4,36 +4,48 @@ def get_lines(file_name):
         return text.split('\n')
 
 
-lines = get_lines('star-1.txt')
-middle = len(lines)/2
-print(len(lines))
-print(middle)
+def extract_gama_epsilon(lines):
+    middle = len(lines) / 2
 
-histogram = [0] * len(lines[0])
+    histogram = [0] * len(lines[0])
+
+    for line in lines:
+        i = 0
+        for char in line:
+            histogram[i] += int(char)
+            i += 1
+
+    gamma = ''
+    epsilon = ''
+
+    for position in histogram:
+        if position > middle:
+            gamma += '1'
+            epsilon += '0'
+        elif position < middle:
+            gamma += '0'
+            epsilon += '1'
+        else:
+            gamma += '1'
+            epsilon += '1'
+
+    return [gamma, epsilon]
+
+
+lines = get_lines('test-input.txt.txt')
+
+gamma_lines = lines
+epsilon_lines = lines
+
+def keep_matching(gamma_lines, gamma_keep):
+    to_keep = []
+
 
 for line in lines:
-    i = 0
-    for char in line:
-        histogram[i] += int(char)
-        i += 1
-        
+    gamma, foo = extract_gama_epsilon(gamma_lines)
+    foo, epsilon_lines = extract_gama_epsilon(epsilon_lines)
 
-gamma = ''
-epsilon = ''
+    gamma_keep = int(gamma[0])
+    gamma_lines = keep_matching(gamma_lines, gamma_keep)
 
-print(histogram)
-print(middle)
-
-
-for position in histogram:
-    if position > middle:
-        gamma += '1'
-        epsilon += '0'
-    elif position < middle:
-        gamma += '0'
-        epsilon += '1'
-    else:
-        raise Exception("Can't handle same value for gama position")
-
-
-print(int(gamma,2) * int(epsilon, 2))
+print(int(gamma, 2) * int(epsilon, 2))
