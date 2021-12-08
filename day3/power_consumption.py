@@ -32,7 +32,7 @@ def extract_gama_epsilon(lines):
     return [gamma, epsilon]
 
 
-lines = get_lines('test-input.txt.txt')
+lines = get_lines('test-input.txt')
 
 gamma_lines = lines
 epsilon_lines = lines
@@ -41,11 +41,8 @@ def keep_matching(gamma_lines, gamma_keep):
     to_keep = []
 
 
-for line in lines:
-    gamma, foo = extract_gama_epsilon(gamma_lines)
-    foo, epsilon_lines = extract_gama_epsilon(epsilon_lines)
+gamma, foo = extract_gama_epsilon(gamma_lines)
+foo, epsilon = extract_gama_epsilon(epsilon_lines)
 
-    gamma_keep = int(gamma[0])
-    gamma_lines = keep_matching(gamma_lines, gamma_keep)
 
 print(int(gamma, 2) * int(epsilon, 2))
