@@ -32,17 +32,48 @@ def extract_gama_epsilon(lines):
     return [gamma, epsilon]
 
 
-lines = get_lines('test-input.txt')
+def ogygen_rating(lines, index):
+    if len(lines) == 1:
+        return lines[0]
 
-gamma_lines = lines
-epsilon_lines = lines
+    ones = 0
+    zeros = 0
+    for line in lines:
+        if line[index] == '0':
+            zeros += 1
+        if line[index] == '1':
+            ones += 1
 
-def keep_matching(gamma_lines, gamma_keep):
-    to_keep = []
+    if ones >= zeros:
+        lines = list(filter(lambda line: line[index] == '1', lines))
+    else:
+        lines = list(filter(lambda line: line[index] == '0', lines))
+
+    return ogygen_rating(lines, index + 1)
+
+def co2_rating(lines, index):
+    if len(lines) == 1:
+        return lines[0]
+
+    ones = 0
+    zeros = 0
+    for line in lines:
+        if line[index] == '0':
+            zeros += 1
+        if line[index] == '1':
+            ones += 1
+
+    if ones < zeros:
+        lines = list(filter(lambda line: line[index] == '1', lines))
+    else:
+        lines = list(filter(lambda line: line[index] == '0', lines))
+
+    return co2_rating(lines, index + 1)
 
 
-gamma, foo = extract_gama_epsilon(gamma_lines)
-foo, epsilon = extract_gama_epsilon(epsilon_lines)
+oxygen = int(ogygen_rating(get_lines('star-1.txt'), 0), 2)
+print(oxygen)
+co2 = int(co2_rating(get_lines('star-1.txt'), 0), 2)
+print(co2)
 
-
-print(int(gamma, 2) * int(epsilon, 2))
+print(oxygen * co2)
