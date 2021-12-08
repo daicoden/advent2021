@@ -15,9 +15,30 @@ def run(days):
     for i in range(days):
         fish_count = len(fishes)
         simulate_day()
-        print(f"simulated day {i}. Now have {len(fishes)}, growth = {len(fishes)/fish_count}")
+        # print(f"simulated day {i}. Now have {len(fishes)}, growth = {len(fishes) / fish_count}")
 
 
-run(80)
+cache = {}
 
-print(len(fishes))
+
+def simulate(spawn_time, days_left):
+    count = 0
+    if days_left < 0:
+        return 0
+    days_left = days_left - spawn_time
+    if days_left in cache:
+        return cache[days_left]
+
+    total_children = -(days_left // -7)
+    count += total_children
+    for new_fish in range(total_children):
+        count += simulate(0, days_left - 2 - (7 * (new_fish + 1)))
+    cache[days_left] = count
+    return count
+
+
+total_count = 0
+for fish in fishes:
+    total_count += 1 + simulate(fish, 256)
+
+print(total_count)
