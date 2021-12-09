@@ -49,14 +49,16 @@ def find_low_points(data):
     for m in range(rows):
         for n in range(cols):
             if low_point(m, n, data):
-                low_points.append(data[m][n] + 1)
+                low_points.append([m, n])
     return low_points
 
 
-found_low_points = find_low_points(get_data('input.txt'))
+data = get_data('input.txt')
+found_low_points = find_low_points(data)
 
 sum = 0
 for point in found_low_points:
-    sum += point
+    sum += data[point[0]][point[1]] + 1
+
 
 print(sum)
