@@ -56,9 +56,44 @@ def find_low_points(data):
 data = get_data('input.txt')
 found_low_points = find_low_points(data)
 
-sum = 0
+
+def basin_size(m, n, data, searched):
+    rows = len(data)
+    cols = len(data[0])
+
+    if m == -1:
+        return 0
+    if m == rows:
+        return 0
+    if n == -1:
+        return 0
+    if n == cols:
+        return 0
+
+    if data[m][n] == 9:
+        return 0
+
+    if searched[m][n]:
+        return 0
+
+    searched[m][n] = True
+
+    return 1 + basin_size(m - 1, n, data, searched) \
+           + basin_size(m + 1, n, data, searched) \
+           + basin_size(m, n - 1, data, searched) \
+           + basin_size(m, n + 1, data, searched)
+
+
+rows = len(data)
+cols = len(data[0])
+
+basin_sizes = []
 for point in found_low_points:
-    sum += data[point[0]][point[1]] + 1
+    searched = []
+    for m in range(rows):
+        searched.append([False] * cols)
+    basin_sizes.append(basin_size(point[0], point[1], data, searched))
 
 
-print(sum)
+basin_sizes = sorted(basin_sizes, reverse=True)
+print(basin_sizes[0] * basin_sizes[1] * basin_sizes[2])
