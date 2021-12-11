@@ -13,7 +13,7 @@ close_values = [')', ']', '}', '>']
 def validate(line, stack, index=0):
     #  If we're incemplete
     if len(line) == index and len(stack) != 0:
-        return False
+        return stack
 
     if len(line) == index:
         return None
@@ -39,14 +39,23 @@ SCORES = {
     '>': 25137
 }
 
-score=0
+CLOSED_SCORES = {
+    '(': 1,
+    '[': 2,
+    '{': 3,
+    '<': 4,
+}
+
+scores = []
 for line in data:
     result = validate(line, [], 0)
-    if result is not None:
-        if result != False:
-            score += SCORES[result]
-            errored_data.append(result)
-    else:
-        print("good line")
+    if isinstance(result, list):
+        score = 0
+        for missing in reversed(result):
+            score *= 5
+            score += CLOSED_SCORES[missing]
 
-print(score)
+        scores.append(score)
+
+
+print(sorted(scores)[len(scores)//2])
