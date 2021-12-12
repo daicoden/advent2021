@@ -63,9 +63,15 @@ def step(data):
 
 data = get_data('input.txt')
 
-sum = 0
-for i in range(100):
-    sum += step(data)
+found = False
+rows = len(data)
+cols = len(data[0])
+i = 0
+while not found:
+    i += 1
+    if step(data) == rows * cols:
+        found = True
+        print(i)
 
 def print_data(data):
     rows = len(data)
@@ -74,6 +80,3 @@ def print_data(data):
         for n in range(cols):
             print(data[m][n], end='')
         print('')
-
-print_data(data)
-print(sum)
