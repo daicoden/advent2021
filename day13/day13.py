@@ -61,17 +61,17 @@ for f in folds:
     else:
         to_folds.append([0, number])
 
-first_fold = deepcopy(data)
-print(to_folds)
-fold(to_folds[0][0], to_folds[0][1], first_fold)
+for f in to_folds:
+    fold(f[0], f[1], data)
+    if f[0] > 0:
+        rows = rows // 2
+    else:
+        cols = cols // 2
 
-print(list(map(lambda o: str(o), first_fold)))
-my_list = list(set(first_fold))
-
-if to_folds[0][0] > 0:
-    rows = rows // 2
-else:
-    cols = cols // 2
-
-print(list(map(lambda o: str(o), my_list)))
-print(len(my_list))
+for m in range(rows):
+    for n in range(cols):
+        if Point(n, m) in data:
+            print("X", end='')
+        else:
+            print('.', end='')
+    print('')
