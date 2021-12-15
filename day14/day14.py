@@ -1,37 +1,11 @@
 from collections import Counter
 
 
-class Node:
-    def __init__(self, val, next):
-        self.val = val
-        self.next = next
-
-
-def get_str(node: Node):
-    string = ''
-    while node.next:
-        string += node.val
-        node = node.next
-
-    string += node.val
-
-    return string
-
-
 def get_data(filename):
     insertion_rules = {}
 
     with open(filename) as f:
         polymer = f.readline().rstrip()
-        last_node = None
-        for char in polymer:
-            new_node = Node(char, None)
-            if last_node:
-                last_node.next = new_node
-                last_node = new_node
-            else:
-                first_node = new_node
-                last_node = new_node
 
         # blank line
         f.readline()
@@ -39,23 +13,43 @@ def get_data(filename):
             insertion = list(map(lambda x: x.strip(), line.rstrip().split('->')))
             insertion_rules[insertion[0]] = insertion[1]
 
-    return [first_node, insertion_rules]
+    return [polymer, insertion_rules]
 
+
+cache = {}
 
 def step(char1, char2, insertion_rules, remaining_iterations):
     combined = char1 + char2
+
+    cache_key = char1 + char2 + str(remaining_iterations)
+    if cache_key in cache:
+        return cache[cache_key]
+
     if remaining_iterations == 0:
-        return Counter(combined)
+        return Counter()
 
     if combined in insertion_rules:
-        return step(char1, insertion_rules[combined], insertion_rules, remaining_iterations - 1) \
-               + step(insertion_rules[combined], char2, insertion_rules, remaining_iterations - 1)
+        counter = Counter(insertion_rules[combined])
+        final = counter + step(char1, insertion_rules[combined], insertion_rules, remaining_iterations - 1) \
+                + step(insertion_rules[combined], char2, insertion_rules, remaining_iterations - 1)
+        cache[cache_key] = final
+        return final
+
+    return Counter()
 
 
-polymer, insertion_rules = get_data('test-input.txt')
+polymer, insertion_rules = get_data('input.txt')
 
-chars = Counter(get_str(polymer))
-most = max(chars, key=chars.get)
-min = min(chars, key=chars.get)
+chars = []
+for char in polymer:
+    chars.append(char)
 
-print(chars[most] - chars[min])
+counter = Counter(polymer)
+for i in range(len(chars) - 1):
+    print(i)
+    counter += step(chars[i], chars[i + 1], insertion_rules, 40)
+
+most = max(counter, key=counter.get)
+min = min(counter, key=counter.get)
+
+print(counter[most] - counter[min])
