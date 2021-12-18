@@ -1,3 +1,6 @@
+from copy import deepcopy
+
+
 class Snail:
     def __init__(self, value=None, parent=None, left=None, right=None):
         if value:
@@ -210,6 +213,8 @@ def process(root: Snail):
             workDone = True
             continue
 
+    return root
+
 
 def get_data(filename):
     data = []
@@ -221,16 +226,28 @@ def get_data(filename):
 
 
 input = get_data('input.txt')
-current = input[0]
-for to_add in input[1:]:
-    print(current)
-    print(to_add)
-    current = Snail(left=current, right=to_add)
-    print(current)
-    process(current)
-    print(current)
+#current = input[0]
+#for to_add in input[1:]:
+#    print(current)
+#    print(to_add)
+#    current = Snail(left=current, right=to_add)
+#    print(current)
+#    process(current)
+#    print(current)
 
-print(current.magnitude())
+#print(current.magnitude())
+
+max = 0
+for first in input:
+    for second in input:
+        if first == second:
+            continue
+
+        mag = process(Snail(left=deepcopy(first), right=deepcopy(second))).magnitude()
+        if mag > max:
+            max = mag
+
+print(max)
 
 """
 for num in input.each_snail():
