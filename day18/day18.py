@@ -1,16 +1,22 @@
 class Snail:
-    def __init__(self, value, parent=None):
-        left = value[0]
-        right = value[1]
-        if type(left) == int:
-            self.left = left
-        else:
-            self.left = Snail(left, self)
+    def __init__(self, value=None, parent=None, left=None, right=None):
+        if value:
+            left = value[0]
+            right = value[1]
+            if type(left) == int:
+                self.left = left
+            else:
+                self.left = Snail(left, self)
 
-        if type(right) == int:
-            self.right = right
+            if type(right) == int:
+                self.right = right
+            else:
+                self.right = Snail(right, self)
         else:
-            self.right = Snail(right, self)
+            self.left = left
+            self.right = right
+            self.left.parent = self
+            self.right.parent = self
         self.parent = parent
 
     def __str__(self):
@@ -107,8 +113,28 @@ class Snail:
             raise Exception('should not be called as root')
         return self.parent.left == self
 
+    def is_parent(self, candidate):
+        if candidate == self:
+            return True
 
-input = Snail([[[[[4, 3], 4], 4], [7, [[8, 4], 9]]], [1, 1]])
+        if not self.parent:
+            return False
+
+        return self.parent.is_parent(candidate)
+
+    def magnitude(self):
+
+        if type(self.left) == int:
+            left_value = self.left * 3
+        else:
+            left_value = self.left.magnitude() * 3
+
+        if type(self.right) == int:
+            right_value = self.right * 2
+        else:
+            right_value = self.right.magnitude() * 2
+
+        return left_value + right_value
 
 
 def explode(root: Snail):
@@ -126,7 +152,7 @@ def explode(root: Snail):
 
     left_snail = to_explode.left_snail()
     if left_snail:
-        if left_snail.right_snail().left_leaf() == to_explode:
+        if to_explode.is_parent(left_snail):
             left_snail.left += to_explode.left
         else:
             left_snail.right_leaf().right += to_explode.left
@@ -134,8 +160,7 @@ def explode(root: Snail):
     right_snail = to_explode.right_snail()
 
     if right_snail:
-        if right_snail.left_snail().right_leaf() == to_explode:
-            print('i thought so')
+        if to_explode.is_parent(right_snail):
             right_snail.right += to_explode.right
         else:
             right_snail.left_leaf().left += to_explode.right
@@ -150,7 +175,6 @@ def explode(root: Snail):
 
 def split(root: Snail):
     to_split = None
-    split_side = None
     for snail in root.each_snail():
         if type(snail.left) == int and snail.left > 9:
             to_split = snail
@@ -174,20 +198,39 @@ def split(root: Snail):
     return to_split
 
 
+def process(root: Snail):
+    workDone = True
+    while workDone:
+        workDone = False
+        if explode(root):
+            workDone = True
+            continue
 
-print(input)
-print(explode(input))
-print(input)
-print(explode(input))
-print(input)
-print(split(input))
-print(input)
-print(split(input))
-print(input)
-print(explode(input))
+        if split(root):
+            workDone = True
+            continue
 
-print(input)
 
+def get_data(filename):
+    data = []
+    with open(filename) as f:
+        for line in f.readlines():
+            data.append(Snail(eval(line)))
+
+    return data
+
+
+input = get_data('input.txt')
+current = input[0]
+for to_add in input[1:]:
+    print(current)
+    print(to_add)
+    current = Snail(left=current, right=to_add)
+    print(current)
+    process(current)
+    print(current)
+
+print(current.magnitude())
 
 """
 for num in input.each_snail():
